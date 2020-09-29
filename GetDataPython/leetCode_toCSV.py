@@ -8,4 +8,4 @@ def saveData(csvFileName):
         userLeetcode_Datas.append(getData(i))
 
     df_leetcode = pd.DataFrame(userLeetcode_Datas)
-    df_leetcode.to_csv('../Database/leetcode_usr_data.csv',index=False)
+    df_leetcode.to_csv('../../Database/leetcode_usr_data.csv',index=False)
