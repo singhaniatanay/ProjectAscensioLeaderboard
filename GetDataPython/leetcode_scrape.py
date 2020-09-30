@@ -1,5 +1,5 @@
 from bs4 import BeautifulSoup
-import requests
+import requests,os
 
 def getData(userID):
     url = 'https://leetcode.com/{}/'.format(userID)
