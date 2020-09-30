@@ -4,9 +4,6 @@ import sys,os
 
 
 def leetcode_scrape(team):
-	print("##################     CHECK    ##########################")
-	print(os.listdir())
-	print("##################   END   ################################")
 	df = pd.read_csv('../Database/{}/UserDatabase.csv'.format(team))
 	userLeetcode_Datas = []
 	for i in df['LeetCode_User']:
