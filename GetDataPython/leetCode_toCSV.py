@@ -16,9 +16,6 @@ def leetcode_scrape(team):
     df_leetcode.to_csv('../../Database/leetcode_usr_data.csv',index=False)
 =======
 def leetcode_scrape(team):
-	print("##################     CHECK    ##########################")
-	print(os.listdir())
-	print("##################   END   ################################")
 	df = pd.read_csv('../Database/{}/UserDatabase.csv'.format(team))
 	userLeetcode_Datas = []
 	for i in df['LeetCode_User']:
