@@ -10,4 +10,4 @@ def scrapeCodeforces(team):
 	codeforces_scrape(team)
 
 
-
+#temp
