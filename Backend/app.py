@@ -3,6 +3,8 @@ import sys,os,json
 import pandas as pd
 
 app  = Flask(__name__)
+
+#to import file from another directory
 sys.path.append(os.path.join(os.path.dirname(__file__),'..','GetDataPython'))
 from scrape import scrapeLeetcode, scrapeCodeforces
 
