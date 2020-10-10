@@ -1,8 +1,12 @@
 from flask import Flask,jsonify,request, make_response
 import sys,os,json
 import pandas as pd
+import time
+from baseconv import base62 
 
-from DAO.database import getUserDAO, createUserDAO
+from ValidationLayer.validationLayer import isRequestValid
+from DAO.database import getUserDAO, createUserDAO, createTeamDAO
+
 
 app  = Flask(__name__)
 sys.path.append(os.path.join(os.path.dirname(__file__),'..','GetDataPython'))
@@ -32,9 +36,8 @@ def leaderboardCodeforces():
 
 @app.route('/getUserData')
 def getUserData():
-	emailID = request.headers.get('emailID')
 	googleID = request.headers.get('googleID')
-	return jsonify(getUserDAO(emailID,googleID))
+	return jsonify(getUserDAO(googleID))
 
 
 @app.route('/createUser', methods=['POST'])
@@ -46,6 +49,15 @@ def createUser():
 	data = createUserDAO(googleID,emailID,cf_handle,lc_handle)
 	return make_response(jsonify(data), 201)
 
+@app.route('/createTeam', methods=['POST'])
+def createTeam():
+	if(!isRequestValid(request))
+		return make_response(jsonify({'status':'User Does Not Exist!'}),401)
+
+	code = base62.encode(int(round(time.time() * 1000)))
+	googleID = request.headers.get('googleID')
+	data = createTeamDAO(googleID,code)
+	return make_response(jsonify(data),201)
 
 if __name__ == '__main__':
 	app.run(port=3000)

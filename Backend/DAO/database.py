@@ -13,8 +13,12 @@ team_collection = pymongo.collection.Collection(db, 'Team')
 
 
 def getUserDAO(emailID,googleID):
+
 	userData = user_collection.find_one({'_id':googleID})
 	return userData
+
+def createTeamDAO(googleID,teamCode):
+	
 
 
 def createUserDAO(googleID,emailID,cf_handle,lc_handle):
