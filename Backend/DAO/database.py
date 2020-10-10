@@ -12,5 +12,26 @@ user_collection = pymongo.collection.Collection(db, 'User')
 team_collection = pymongo.collection.Collection(db, 'Team')
 
 
-for x in team_collection.find():
-	print(x)
+def getUserDAO(emailID,googleID):
+	userData = user_collection.find_one({'_id':googleID})
+	return userData
+
+
+def createUserDAO(googleID,emailID,cf_handle,lc_handle):
+	userData = {
+				'_id' : googleID,
+				'emailID' : emailID,
+				'cf_handle' : cf_handle,
+				'lc_handle' : lc_handle,
+				'teams' : []
+				}
+	
+	try :
+		dat =  user_collection.insert_one(userData)
+		userData['success'] = True
+
+	except :
+		userData = {'success' : False}
+
+	return userData
+
