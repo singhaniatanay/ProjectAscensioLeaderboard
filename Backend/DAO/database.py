@@ -25,6 +25,7 @@ def midnightUpdateDAO():
 		lc_curr_data = leetcode_scrape.getData(lc_handle)
 		today = str(datetime.today().day) + '-' + str(datetime.today().month) + '-' +str(datetime.today().year)
 		currUserData['lc_data'].append([today,lc_curr_data['Solved Questions'],lc_curr_data['Acceptance Rate']])
+		currUserData['last_lc_Data'] = lc_curr_data['Solved Questions']
 		try :
 			user_collection.update_one({'_id':currUserData['_id']}, {'$set':currUserData})
 		except :
@@ -71,13 +72,15 @@ def joinTeamDAO(googleID,teamCode):
 
 
 def createUserDAO(googleID,emailID,cf_handle,lc_handle):
+	lc_curr_data = leetcode_scrape.getData(lc_handle)
 	userData = {
 				'_id' : googleID,
 				'emailID' : emailID,
 				'cf_handle' : cf_handle,
 				'lc_handle' : lc_handle,
 				'teams' : [],
-				'lc_data' : []
+				'lc_data' : [],
+				'last_lc_Data' : lc_curr_data['Solved Questions']
 				}
 	
 	try :
