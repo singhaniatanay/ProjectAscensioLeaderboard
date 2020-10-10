@@ -15,9 +15,12 @@ team_collection = pymongo.collection.Collection(db, 'Team')
 # for x in team_collection.find():
 # 	print(x)
 
-def getUserDAO(emailID,googleID):
+def getUserDAO(googleID):
 	userData = user_collection.find_one({'_id':googleID})
 	return userData
+
+def createTeamDAO(googleID,teamCode):
+	
 
 
 def createUserDAO(googleID,emailID,cf_handle,lc_handle):
