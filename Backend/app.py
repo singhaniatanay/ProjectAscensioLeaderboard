@@ -4,8 +4,8 @@ import pandas as pd
 import time
 from baseconv import base62 
 from flask_apscheduler import APScheduler
-from ValidationLayer.validationLayer import isRequestValid, isCFValid, isLCValid
-from DAO.database import getUserDAO, createUserDAO, createTeamDAO, joinTeamDAO, midnightUpdateDAO
+from ValidationLayer.validationLayer import isRequestValid, isCFValid, isLCValid, isTeamValid
+from DAO.database import getUserDAO, createUserDAO, createTeamDAO, joinTeamDAO, midnightUpdateDAO, getTeamDAO, getTeamDataDAO
 
 app  = Flask(__name__)
 sys.path.append(os.path.join(os.path.dirname(__file__),'..','GetDataPython'))
@@ -16,12 +16,17 @@ scheduler = APScheduler()
 
 @app.route('/leaderboard/leetcode')
 def leaderboardLeetcode():
-	team_name = request.args.get('team')
-	scrapeLeetcode(team_name)
-	leetcode_user_df = pd.read_csv('../Database/{}/leetcode_user_data.csv'.format(team_name))
-	output_json = leetcode_user_df.to_json(orient="records")
-	parsed_output = json.loads(output_json)
-	return jsonify(parsed_output)
+	googleID = request.headers.get('googleID')
+	teamCode = request.args.get('teamCode')
+	if not isRequestValid(googleID):
+		return make_response(jsonify({'status':'User Does Not Exist!'}),401)
+	if not isTeamValid(teamCode):
+		return make_response(jsonify({'status':'Team Does Not Exist!'}),401)
+
+	data = getTeamDataDAO(teamCode)
+
+	return jsonify(data)
+
 
 
 @app.route('/leaderboard/codeforces')
@@ -37,7 +42,6 @@ def leaderboardCodeforces():
 def getUserData():
 	googleID = request.headers.get('googleID')
 	return jsonify(getUserDAO(googleID))
-
 
 @app.route('/createUser', methods=['POST'])
 def createUser():
@@ -76,12 +80,11 @@ def joinTeam():
 	return make_response(jsonify(data),201)
 
 def midnightDataFetch():
-	print('===== Im Working =====')
 	midnightUpdateDAO()
 
 if __name__ == '__main__':
-	# scheduler.add_job(id = 'cronJobWorker',func = midnightDataFetch,trigger = 'cron',hour = 19, minute = 41)
-	scheduler.add_job(id = 'cronJobWorker',func = midnightDataFetch,trigger = 'interval', seconds = 5)
+	scheduler.add_job(id = 'cronJobWorker',func = midnightDataFetch,trigger = 'cron',hour = 0, minute = 0)
+	# scheduler.add_job(id = 'cronJobWorker',func = midnightDataFetch,trigger = 'interval', seconds = 5)
 	scheduler.start()
 	app.run(port=3000)
 

@@ -37,6 +37,27 @@ def getUserDAO(googleID):
 	userData = user_collection.find_one({'_id':googleID})
 	return userData
 
+def getTeamDAO(teamCode):
+	teamData = team_collection.find_one({'_id':teamCode})
+	return teamData
+
+def getTeamDataDAO(teamCode):
+	team = team_collection.find_one({'_id':teamCode})
+	teamData = {}
+	for member in team['members']:
+		memberData = user_collection.find_one({'_id':member})
+		lc_curr_data = leetcode_scrape.getData(memberData['lc_handle'])
+		dat = {}
+		dat['lc_data'] = memberData['lc_data']
+		dat['lc_curr_data'] = lc_curr_data
+		teamData[member] = dat
+		
+		
+
+
+	return teamData
+
+
 def createTeamDAO(googleID,teamCode,timestamp,team_name):
 	data = {
 			'_id' : teamCode,
@@ -47,6 +68,9 @@ def createTeamDAO(googleID,teamCode,timestamp,team_name):
 	try :
 		dat = team_collection.insert_one(data)
 		data['success'] = True
+		userData = getUserDAO(googleID)
+		userData['teams'].append(teamCode)
+		user_collection.update_one({'_id':googleID}, {'$set' : userData})
 	except :
 		data = {'success' : False, 'message' : 'Team Creation Failed'}
 
@@ -58,9 +82,12 @@ def joinTeamDAO(googleID,teamCode):
 		if googleID in prev_data['members']:
 			return {'success' : False, 'message' : 'User Already present in the team!'}
 
+		userData = getUserDAO(googleID)
+		userData['teams'].append(teamCode)
 		prev_data['members'].append(googleID)
 		try :
 			team_collection.update_one({'_id': teamCode}, {'$set' : prev_data})
+			user_collection.update_one({'_id':googleID}, {'$set' : userData})
 			prev_data['success'] = True
 		except :
 			prev_data = {'success' : False, 'message' : 'Team Update Failed!'}
